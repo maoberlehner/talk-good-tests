@@ -19,11 +19,12 @@ const props = defineProps<{
       :key="item.id"
       class="item"
     >
-      <div
+      <button
         class="rounded px-4 py-3 bg-teal-600 text-white text-left w-full transition-colors"
+        @click="$emit('remove', item.id)"
       >
         {{ item.title }}
-      </div>
+      </button>
     </li>
   </ul>
 </template>

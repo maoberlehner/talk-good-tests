@@ -41,3 +41,10 @@ it(`should be possible to add a new item`, () => [
   shoppingList.addItem(`Bread`),
   shoppingList.expectItemOnList(`Bread`),
 ]);
+
+it(`should be possible to remove an item`, ({ driver }) => [
+  driver.prepare(hasItemsActive),
+  shoppingList.open(),
+  shoppingList.removeItem(`Bread`),
+  shoppingList.expectItemNotOnList(`Bread`),
+]);

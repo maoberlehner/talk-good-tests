@@ -8,6 +8,7 @@ import {
   create,
   getList,
   Item,
+  update,
 } from '../repositories/shopping-list-repository';
 
 import ShoppingList from './ShoppingList.vue';
@@ -26,6 +27,11 @@ let addItem = async () => {
   items.value = await getList();
   itemNewTitle.value = ``;
 };
+
+let removeItem = async (itemId: number) => {
+  await update(itemId, { state: `inactive` });
+  items.value = await getList();
+};
 </script>
 
 <template>
@@ -38,6 +44,7 @@ let addItem = async () => {
         <ShoppingList
           :items="itemsActive"
           data-qa="active items"
+          @remove="removeItem"
         />
       </div>
 
