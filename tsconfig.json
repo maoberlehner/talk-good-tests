@@ -12,12 +12,7 @@
     "lib": [
       "esnext",
       "dom"
-    ],
-    "paths": {
-      "@talk-vitest-cypress/application-test-driver": [
-        "./test/drivers/playwright/playwright-driver.ts"
-      ]
-    }
+    ]
   },
   "include": [
     "custom.d.ts",

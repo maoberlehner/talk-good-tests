@@ -14,7 +14,4 @@ I want to highlight some general principles from testing theory and then go into
 ```bash
 # Start dev server
 npm run dev
-
-# Open Cypress UI
-npx cypress open
 ```

@@ -1,6 +1,5 @@
-import { it } from '@talk-vitest-cypress/application-test-driver';
-
-import { Precondition, Step } from '../drivers/types';
+import { it } from '../drivers/virtual/driver';
+import { Driver, Precondition } from '../drivers/types';
 
 const hasItemsActive: Precondition = ({ localStorage }): void => {
   localStorage.setItem(`shopping-list`, JSON.stringify([
@@ -10,34 +9,36 @@ const hasItemsActive: Precondition = ({ localStorage }): void => {
 };
 
 // DSL
-const shoppingList: Record<string, (...params: any) => Step> = {
-  addItem: (title: string) => ({ driver }) => [
-    driver.findByLabelText(`Title`).type(title),
-    driver.findByRole(`button`, { name: `Add item` }).click(),
-  ],
-  removeItem: (title: string) => ({ driver }) => [
-    driver.findByRole(`button`, { name: title }).click(),
-  ],
-  expectItemOnList: (item: string) => ({ driver }) => [
-    driver.findByText(item).shouldBeVisible(),
-  ],
-  expectItemNotOnList: (item: string) => ({ driver }) => [
-    driver.queryByText(item).shouldNotExist(),
-  ],
-  open: () => ({ driver }) => [
-    driver.goTo(`/`),
-  ],
-};
+const makeShoppingList = ({ driver }: { driver: Driver }) => ({
+  addItem: async (title: string) => {
+    await driver.findByLabelText(`Title`).type(title);
+    await driver.findByRole(`button`, { name: `Add item` }).click();
+  },
+  removeItem: async (title: string) => {
+    await driver.findByRole(`button`, { name: title }).click();
+  },
+  expectItemOnList: async (item: string) => {
+    await driver.findByText(item).shouldBeVisible();
+  },
+  expectItemNotOnList: async (item: string) => {
+    await driver.queryByText(item).shouldNotExist();
+  },
+  open: async () => {
+    await driver.goTo(`/`);
+  },
+});
 
-it(`should list active items`, ({ driver }) => [
-  driver.prepare(hasItemsActive),
-  shoppingList.open(),
-  shoppingList.expectItemOnList(`Bread`),
-  shoppingList.expectItemOnList(`Butter`),
-]);
+it(`should list active items`, async ({ driver }) => {
+  driver.prepare(hasItemsActive);
+  let shoppingList = makeShoppingList({ driver });
+  await shoppingList.open();
+  await shoppingList.expectItemOnList(`Bread`);
+  await shoppingList.expectItemOnList(`Butter`);
+});
 
-it(`should be possible to add a new item`, () => [
-  shoppingList.open(),
-  shoppingList.addItem(`Bread`),
-  shoppingList.expectItemOnList(`Bread`),
-]);
+it(`should be possible to add a new item`, async ({ driver }) => {
+  let shoppingList = makeShoppingList({ driver });
+  await shoppingList.open();
+  await shoppingList.addItem(`Bread`);
+  await shoppingList.expectItemOnList(`Bread`);
+});

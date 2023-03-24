@@ -2,7 +2,8 @@ module.exports = {
   overrides: [
     {
       files: [
-        `./vitest-driver.ts`,
+        `./driver.ts`,
+        `./setup.ts`,
       ],
       env: {
         browser: true,

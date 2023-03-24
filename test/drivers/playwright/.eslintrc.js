@@ -2,7 +2,7 @@ module.exports = {
   overrides: [
     {
       files: [
-        `./playwright-driver.ts`,
+        `./driver.ts`,
       ],
       env: {
         browser: true,

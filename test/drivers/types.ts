@@ -1,21 +1,19 @@
-type ActionCallback = () => unknown|Promise<unknown>;
-
 export type Interactions = {
-  check: () => ActionCallback,
-  click: () => ActionCallback,
-  focus: () => ActionCallback,
-  type: (text: string) => ActionCallback,
+  check: () => Promise<void>,
+  click: () => Promise<void>,
+  focus: () => Promise<void>,
+  type: (text: string) => Promise<void>,
 }
 
 export type Assertions = {
-  shouldBeVisible: () => ActionCallback,
-  shouldHaveAttribute: (name: string, value?: string|RegExp) => ActionCallback,
-  shouldMatchScreenshot: (name: string) => ActionCallback,
+  shouldBeVisible: () => Promise<void>,
+  shouldHaveAttribute: (name: string, value?: string|RegExp) => Promise<void>,
+  shouldMatchScreenshot: (name: string) => Promise<void>,
 }
 
 export type AssertionsNot = {
-  shouldNotBeVisible: () => ActionCallback,
-  shouldNotExist: () => ActionCallback,
+  shouldNotBeVisible: () => Promise<void>,
+  shouldNotExist: () => Promise<void>,
 }
 
 type FindByLabelText = (text: string) => Interactions & Assertions;
@@ -44,7 +42,7 @@ export type GoToOptions = {
   device?: `desktop`|`mobile`,
 };
 
-type GoTo = (path: string, options?: GoToOptions) => () => void;
+type GoTo = (path: string, options?: GoToOptions) => Promise<void>;
 
 type Body = Record<string|number, unknown>;
 
@@ -61,9 +59,9 @@ type PreconditionOptions = {
   mockEndpoint: MockEndpoint,
 }
 
-export type Precondition = (options: PreconditionOptions) => void;
+export type Precondition = (options: PreconditionOptions) => void|Promise<void>;
 
-export type Prepare = (precondition: Precondition) => () => void;
+export type Prepare = (precondition: Precondition) => Promise<void>;
 
 export type Driver = {
   findAllByText: FindAllByText,
@@ -76,6 +74,4 @@ export type Driver = {
   queryByText: QueryByText,
 }
 
-export type Step = (() => unknown|void)|(({ driver }: { driver: Driver }) => Step|Step[]);
-
-export type ItCallback = ({ driver }: { driver: Driver }) => Step[];
+export type ItCallback = ({ driver }: { driver: Driver }) => void|Promise<void>;
