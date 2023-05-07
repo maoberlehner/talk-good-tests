@@ -8,7 +8,7 @@ import {
 
 import ShoppingList from './ShoppingList.vue';
 
-it(`it should emit an "remove" event when we click an item`, async () => {
+it(`it should emit a "remove" event when we click an item`, async () => {
   // let user = userEvent.setup();
   // let { emitted } = render(ShoppingList, {
   //   props: {

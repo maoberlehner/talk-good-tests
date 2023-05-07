@@ -1,6 +1,7 @@
 import { it } from '../drivers/virtual/driver';
 import { Driver, Precondition } from '../drivers/types';
 
+// Preconditions for mocking state and API requests
 const hasItemsActive: Precondition = ({ localStorage }): void => {
   localStorage.setItem(`shopping-list`, JSON.stringify([
     { id: 1, title: `Bread`, state: `active` },
@@ -8,7 +9,7 @@ const hasItemsActive: Precondition = ({ localStorage }): void => {
   ]));
 };
 
-// DSL
+// Domain Specific Language
 const makeShoppingList = ({ driver }: { driver: Driver }) => ({
   addItem: async (title: string) => {
     await driver.findByLabelText(`Title`).type(title);
