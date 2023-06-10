@@ -1,9 +1,4 @@
-import {
-  expect,
-  Locator,
-  Page,
-  test as itPlaywright,
-} from '@playwright/test';
+import { expect, Locator, Page, test as itPlaywright } from '@playwright/test';
 
 import type {
   Assertions,
@@ -54,7 +49,9 @@ function makeInteractions(elementResolver: LocatorResolver): Interactions {
   };
 }
 
-function makeActions(elementResolver: LocatorResolver): Assertions & Interactions {
+function makeActions(
+  elementResolver: LocatorResolver,
+): Assertions & Interactions {
   return {
     ...makeAssertions(elementResolver),
     ...makeInteractions(elementResolver),
@@ -73,13 +70,17 @@ const makeDriver = ({ page }: { page: Page }): Driver => ({
   },
   findByText(text, { withinTestId = null } = {}) {
     return makeAssertions(() => {
-      let screenLocal = withinTestId ? page.locator(`[data-qa="${withinTestId}"]`) : page;
+      let screenLocal = withinTestId
+        ? page.locator(`[data-qa="${withinTestId}"]`)
+        : page;
       return screenLocal.getByText(text);
     });
   },
   findAllByText(text, { withinTestId = null } = {}) {
     return makeAssertions(() => {
-      let screenLocal = withinTestId ? page.locator(`[data-qa="${withinTestId}"]`) : page;
+      let screenLocal = withinTestId
+        ? page.locator(`[data-qa="${withinTestId}"]`)
+        : page;
       return screenLocal.getByText(text);
     });
   },
@@ -107,7 +108,9 @@ const makeDriver = ({ page }: { page: Page }): Driver => ({
   },
   queryByText(text, { withinTestId = null } = {}) {
     return makeAssertionsNot(() => {
-      let screenLocal = withinTestId ? page.locator(`[data-qa="${withinTestId}"]`) : page;
+      let screenLocal = withinTestId
+        ? page.locator(`[data-qa="${withinTestId}"]`)
+        : page;
       return screenLocal.getByText(text);
     });
   },
@@ -120,15 +123,9 @@ function wrapItCallback(func: ItCallback) {
   };
 }
 
-const it = (description: string, func: ItCallback) => itPlaywright(
-  description,
-  wrapItCallback(func),
-);
-it.only = (description: string, func: ItCallback) => itPlaywright.only(
-  description,
-  wrapItCallback(func),
-);
+const it = (description: string, func: ItCallback) =>
+  itPlaywright(description, wrapItCallback(func));
+it.only = (description: string, func: ItCallback) =>
+  itPlaywright.only(description, wrapItCallback(func));
 
-export {
-  it,
-};
+export { it };

@@ -1,9 +1,7 @@
 module.exports = {
   overrides: [
     {
-      files: [
-        `./driver.ts`,
-      ],
+      files: [`./driver.ts`],
       env: {
         browser: true,
         node: true,

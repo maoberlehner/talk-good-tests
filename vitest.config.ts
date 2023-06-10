@@ -16,17 +16,10 @@ export default defineConfig({
         `test/**/*`,
       ],
       provider: `c8`,
-      reporter: [
-        `html`,
-        `text`,
-      ],
-      src: [
-        path.resolve(`./src`),
-      ],
+      reporter: [`html`, `text`],
+      src: [path.resolve(`./src`)],
     },
     environment: `happy-dom`,
-    setupFiles: [
-      `./test/drivers/vitest/setup.ts`,
-    ],
+    setupFiles: [`./test/drivers/vitest/setup.ts`],
   },
 });

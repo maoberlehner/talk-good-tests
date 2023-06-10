@@ -3,10 +3,13 @@ import { Driver, Precondition } from '../drivers/types';
 
 // Preconditions for mocking state and API requests
 const hasItemsActive: Precondition = ({ localStorage }): void => {
-  localStorage.setItem(`shopping-list`, JSON.stringify([
-    { id: 1, title: `Bread`, state: `active` },
-    { id: 2, title: `Butter`, state: `active` },
-  ]));
+  localStorage.setItem(
+    `shopping-list`,
+    JSON.stringify([
+      { id: 1, title: `Bread`, state: `active` },
+      { id: 2, title: `Butter`, state: `active` },
+    ]),
+  );
 };
 
 // Domain Specific Language
