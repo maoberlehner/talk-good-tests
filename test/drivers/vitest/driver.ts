@@ -53,7 +53,6 @@ function makeAssertions(elementResolver: ElementResolver): Assertions {
         }
       }
     },
-    shouldMatchScreenshot: () => { throw new Error(`Not implemented! Use a different driver for this!`); },
   };
 }
 

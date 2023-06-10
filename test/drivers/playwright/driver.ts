@@ -23,9 +23,6 @@ function makeAssertions(elementResolver: LocatorResolver): Assertions {
     shouldBeVisible: async () => {
       await expect(elementResolver()).toBeVisible();
     },
-    shouldMatchScreenshot: () => {
-      throw new Error(`Not implemented! Use a different driver for that!`);
-    },
   };
 }
 

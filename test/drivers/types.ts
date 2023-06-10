@@ -8,7 +8,6 @@ export type Interactions = {
 export type Assertions = {
   shouldBeVisible: () => Promise<void>,
   shouldHaveAttribute: (name: string, value?: string|RegExp) => Promise<void>,
-  shouldMatchScreenshot: (name: string) => Promise<void>,
 }
 
 export type AssertionsNot = {
