@@ -1,7 +1,4 @@
-import {
-  expect,
-  it as itVitest,
-} from 'vitest';
+import { expect, it as itVitest } from 'vitest';
 import {
   configure,
   screen,
@@ -20,29 +17,24 @@ import type {
   Interactions,
   MockEndpoint,
   ItCallback,
-  Step,
 } from '../types';
-import {
-  mount,
-} from '../../../src/mount';
-import {
-  makeRouter,
-} from '../../../src/router';
+import { mount } from '../../../src/mount';
+import { makeRouter } from '../../../src/router';
 
 configure({ testIdAttribute: `data-qa` });
 
-type ElementResolver = () => Promise<HTMLElement|HTMLElement[]>;
+type ElementResolver = () => Promise<HTMLElement | HTMLElement[]>;
 
-function toArray<Type>(maybeArray: Type|Type[]) {
+function toArray<Type>(maybeArray: Type | Type[]) {
   return Array.isArray(maybeArray) ? maybeArray : [maybeArray];
 }
 
 function makeAssertions(elementResolver: ElementResolver): Assertions {
   return {
-    shouldBeVisible: () => async () => {
+    shouldBeVisible: async () => {
       expect(await elementResolver()).toBeTruthy();
     },
-    shouldHaveAttribute: (attribute, value) => async () => {
+    shouldHaveAttribute: async (attribute, value) => {
       let elements = toArray<HTMLElement>(await elementResolver());
 
       // eslint-disable-next-line no-restricted-syntax
@@ -54,16 +46,17 @@ function makeAssertions(elementResolver: ElementResolver): Assertions {
         }
       }
     },
-    shouldMatchScreenshot: () => () => { throw new Error(`Not implemented! Use a different driver for this!`); },
   };
 }
 
-function makeAssertionsNot(elementResolver: () => Promise<HTMLElement|null>): AssertionsNot {
+function makeAssertionsNot(
+  elementResolver: () => Promise<HTMLElement | null>,
+): AssertionsNot {
   return {
-    shouldNotBeVisible: () => async () => {
+    shouldNotBeVisible: async () => {
       expect(await elementResolver()).toBeFalsy();
     },
-    shouldNotExist: () => async () => {
+    shouldNotExist: async () => {
       let element = await elementResolver();
       if (element) {
         try {
@@ -81,7 +74,7 @@ function makeInteractions(
   { user }: { user: UserEvent },
 ): Interactions {
   return {
-    check: () => async () => {
+    check: async () => {
       let elements = toArray<HTMLElement>(await elementResolver());
       // eslint-disable-next-line no-restricted-syntax
       for (let element of elements) {
@@ -89,7 +82,7 @@ function makeInteractions(
         await user.click(element);
       }
     },
-    click: () => async () => {
+    click: async () => {
       let elements = toArray<HTMLElement>(await elementResolver());
       // eslint-disable-next-line no-restricted-syntax
       for (let element of elements) {
@@ -97,14 +90,14 @@ function makeInteractions(
         await user.click(element);
       }
     },
-    focus: () => async () => {
+    focus: async () => {
       let elements = toArray<HTMLElement>(await elementResolver());
       // eslint-disable-next-line no-restricted-syntax
       for (let element of elements) {
         element.focus();
       }
     },
-    type: text => async () => {
+    type: async (text) => {
       let elements = toArray<HTMLElement>(await elementResolver());
       // eslint-disable-next-line no-restricted-syntax
       for (let element of elements) {
@@ -128,65 +121,64 @@ function makeActions(
 export const mockServer = setupServer();
 
 type MockHandle = {
-  endpoint: string,
+  endpoint: string;
   options: {
-    httpVerb: string,
-    status: number,
-  },
-  hasBeenInvoked: boolean,
+    httpVerb: string;
+    status: number;
+  };
+  hasBeenInvoked: boolean;
 };
 
-const makeMockEndpoint = ({
-  mockHandles,
-}: {
-  mockHandles: Set<MockHandle>,
-}): MockEndpoint => (endpoint, {
-  body: bodyOrGetBody,
-  httpVerb = `get`,
-  status = 200,
-}) => {
-  let getBody = typeof bodyOrGetBody === `function` ? bodyOrGetBody : () => bodyOrGetBody;
-  let handle = {
-    endpoint,
-    options: {
-      httpVerb,
-      status,
-    },
-    hasBeenInvoked: false,
+const makeMockEndpoint =
+  ({ mockHandles }: { mockHandles: Set<MockHandle> }): MockEndpoint =>
+  (endpoint, { body: bodyOrGetBody, httpVerb = `get`, status = 200 }) => {
+    let getBody =
+      typeof bodyOrGetBody === `function` ? bodyOrGetBody : () => bodyOrGetBody;
+    let handle = {
+      endpoint,
+      options: {
+        httpVerb,
+        status,
+      },
+      hasBeenInvoked: false,
+    };
+    mockHandles.add(handle);
+    mockServer.use(
+      rest[httpVerb](endpoint, (req, res, ctx) => {
+        handle.hasBeenInvoked = true;
+        return res(
+          ctx.status(status),
+          ctx.json(getBody({ searchParams: req.url.searchParams })),
+        );
+      }),
+    );
   };
-  mockHandles.add(handle);
-  mockServer.use(
-    rest[httpVerb](endpoint, (req, res, ctx) => {
-      handle.hasBeenInvoked = true;
-      return res(ctx.status(status), ctx.json(getBody({ searchParams: req.url.searchParams })));
-    }),
-  );
-};
 
 const makeDriver = ({
   mockHandles,
   user,
 }: {
-  mockHandles: Set<MockHandle>,
-  user: UserEvent,
+  mockHandles: Set<MockHandle>;
+  user: UserEvent;
 }): Driver => ({
-  goTo(path) {
-    return async () => {
-      let router = makeRouter();
-      try {
-        await router.push(path);
-      } catch (error) {
-        // Ignore redirection error.
-        if (error instanceof Error && error.message.includes(`Redirected when going from`)) {
-          return;
-        }
-
-        throw error;
+  async goTo(path) {
+    let router = makeRouter();
+    try {
+      await router.push(path);
+    } catch (error) {
+      // Ignore redirection error.
+      if (
+        error instanceof Error &&
+        error.message.includes(`Redirected when going from`)
+      ) {
+        return;
       }
 
-      document.body.innerHTML = `<div id="app"></div>`;
-      mount({ router });
-    };
+      throw error;
+    }
+
+    document.body.innerHTML = `<div id="app"></div>`;
+    mount({ router });
   },
   findByLabelText(text) {
     return makeActions(() => screen.findByLabelText(text), { user });
@@ -196,73 +188,65 @@ const makeDriver = ({
   },
   findByText(text, { withinTestId = null } = {}) {
     return makeAssertions(async () => {
-      let screenLocal = withinTestId ? within(await screen.findByTestId(withinTestId)) : screen;
+      let screenLocal = withinTestId
+        ? within(await screen.findByTestId(withinTestId))
+        : screen;
       return screenLocal.findByText(text);
     });
   },
   findAllByText(text, { withinTestId = null } = {}) {
     return makeAssertions(async () => {
-      let screenLocal = withinTestId ? within(await screen.findByTestId(withinTestId)) : screen;
+      let screenLocal = withinTestId
+        ? within(await screen.findByTestId(withinTestId))
+        : screen;
       return screenLocal.findAllByText(text);
     });
   },
   findByTestId(testId) {
     return makeActions(() => screen.findByTestId(testId), { user });
   },
-  prepare(precondition) {
-    return () => precondition({ localStorage, mockEndpoint: makeMockEndpoint({ mockHandles }) });
+  async prepare(precondition) {
+    precondition({
+      localStorage,
+      mockEndpoint: makeMockEndpoint({ mockHandles }),
+    });
   },
   queryByText(text, { withinTestId = null } = {}) {
     return makeAssertionsNot(async () => {
-      let screenLocal = withinTestId ? within(await screen.findByTestId(withinTestId)) : screen;
+      let screenLocal = withinTestId
+        ? within(await screen.findByTestId(withinTestId))
+        : screen;
       return screenLocal.queryByText(text);
     });
   },
 });
 
-async function runSteps({ driver, steps }: { driver: Driver, steps: Step[] }) {
-  // eslint-disable-next-line no-restricted-syntax
-  for (let step of steps) {
-    // eslint-disable-next-line no-await-in-loop
-    let nestedCallback = await step({ driver });
-    // Step definitions return another callback.
-    // eslint-disable-next-line no-await-in-loop
-    if (typeof nestedCallback === `function`) await nestedCallback();
-    // eslint-disable-next-line no-await-in-loop
-    if (Array.isArray(nestedCallback)) await runSteps({ driver, steps: nestedCallback });
-  }
-}
-
 function wrapItCallback(func: ItCallback) {
   return async () => {
     let context: {
-      mockHandles: Set<MockHandle>,
-      user: UserEvent,
+      mockHandles: Set<MockHandle>;
+      user: UserEvent;
     } = {
       mockHandles: new Set(),
       user: userEvent.setup(),
     };
     let driver = makeDriver(context);
-    let steps = func({ driver });
-
-    await runSteps({ driver, steps });
+    await func({ driver });
 
     context.mockHandles.forEach((handle) => {
       if (handle.hasBeenInvoked) return;
-      throw new Error(`You mocked an endpoint that you did not use in the test! ${JSON.stringify(handle)}`);
+      throw new Error(
+        `You mocked an endpoint that you did not use in the test! ${JSON.stringify(
+          handle,
+        )}`,
+      );
     });
   };
 }
 
-const it = (description: string, func: ItCallback) => itVitest(
-  description,
-  wrapItCallback(func),
-);
-it.only = (description: string, func: ItCallback) => itVitest.only(
-  description,
-  wrapItCallback(func),
-);
+const it = (description: string, func: ItCallback) =>
+  itVitest(description, wrapItCallback(func));
+it.only = (description: string, func: ItCallback) =>
+  itVitest.only(description, wrapItCallback(func));
 
-export {
-  it,
-};
+export { it };

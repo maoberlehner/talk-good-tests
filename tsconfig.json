@@ -9,15 +9,7 @@
     "sourceMap": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "lib": [
-      "esnext",
-      "dom"
-    ],
-    "paths": {
-      "@talk-vitest-cypress/application-test-driver": [
-        "./test/drivers/playwright/playwright-driver.ts"
-      ]
-    }
+    "lib": ["esnext", "dom"]
   },
   "include": [
     "custom.d.ts",

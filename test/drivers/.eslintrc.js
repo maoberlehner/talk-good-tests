@@ -1,9 +1,7 @@
 module.exports = {
   overrides: [
     {
-      files: [
-        `./types.ts`,
-      ],
+      files: [`./types.ts`],
       env: {
         browser: true,
         node: true,

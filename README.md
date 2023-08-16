@@ -1,6 +1,6 @@
 # Talk: TDD for Frontend Developers
 
-> How to write *good* tests
+> How to write _good_ tests
 
 More and more people started to add tests to their SPAs.The field is still relatively new, and we all need more experience in how to test client-side applications most effectively.
 
@@ -14,7 +14,4 @@ I want to highlight some general principles from testing theory and then go into
 ```bash
 # Start dev server
 npm run dev
-
-# Open Cypress UI
-npx cypress open
 ```

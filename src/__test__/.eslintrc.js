@@ -4,10 +4,13 @@ module.exports = {
     node: true,
   },
   rules: {
-    'import/no-extraneous-dependencies': [`error`, {
-      devDependencies: true,
-      optionalDependencies: true,
-      peerDependencies: true,
-    }],
+    'import/no-extraneous-dependencies': [
+      `error`,
+      {
+        devDependencies: true,
+        optionalDependencies: true,
+        peerDependencies: true,
+      },
+    ],
   },
 };
